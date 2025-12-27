@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container-xl">
+
+  <div class="Find">
+    <h2>{{ t.login_title }}</h2>
+  </div>
+
+  {% if message %}
+    <div class="alert alert-danger">{{ message }}</div>
+  {% endif %}
+
+  <form method="POST">
+
+    <div class="mb-3">
+      <label class="form-label">{{ t.label_role }}</label>
+      <select name="role" class="form-select" required>
+        <option value="">{{ t.select_role_placeholder }}</option>
+        <option value="editor">{{ t.role_editor }}</option>
+        <option value="admin">{{ t.role_admin }}</option>
+      </select>
+    </div>
+
+    <input
+      name="username"
+      class="form-control mb-2"
+      placeholder="{{ t.label_username }}"
+      required
+    >
+
+    <input
+      type="password"
+      name="password"
+      class="form-control mb-3"
+      placeholder="{{ t.label_password }}"
+      required
+    >
+
+    <button type="submit" class="btn btn-dark">{{ t.btn_login }}</button>
+    <a href="/" class="btn btn-secondary">{{ t.btn_back }}</a>
+
+  </form>
+
+</div>
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container-xl">
+
+  <div class="Find">
+    <h2 class="fw-bold mb-0">{{ t.update_title }}</h2>
+    <p class="mb-0">{{ t.update_subtitle }}</p>
+  </div>
+
+  <!-- MESSAGE -->
+  {% if message %}
+    <div class="alert alert-warning">
+      {{ message }}
+    </div>
+  {% endif %}
+
+  <!-- STEP 1: SEARCH GAME -->
+  {% if not matches and not game %}
+    <form method="POST" class="col-md-6">
+      <input type="hidden" name="search">
+      <input
+        name="name"
+        class="form-control mb-2"
+        placeholder="{{ t.update_search_placeholder }}"
+        required
+      >
+      <button class="btn btn-warning">{{ t.btn_search }}</button>
+      <a href="/" class="btn btn-secondary">{{ t.btn_back }}</a>
+    </form>
+  {% endif %}
+
+  <!-- STEP 2: SELECT FROM MATCHES -->
+  {% if matches %}
+    <h5 class="mt-4">{{ t.update_select_title }}</h5>
+
+    <ul class="list-group col-md-8">
+      {% for g in matches %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <strong>{{ g.name }}</strong>
+          <span class="text-muted">
+            — {{ t.label_cabinet_shelf.format(cabinet=g.cabinet, shelf=g.shelf) }}
+          </span>
+        </div>
+
+        <form method="POST" class="m-0">
+          <input type="hidden" name="select">
+          <input type="hidden" name="id" value="{{ g.id }}">
+          <button class="btn btn-sm btn-primary">{{ t.btn_select }}</button>
+        </form>
+      </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <!-- STEP 3: EDIT FORM -->
+  {% if game %}
+    <form method="POST" class="col-md-6 mt-4">
+      <input type="hidden" name="save">
+      <input type="hidden" name="id" value="{{ game.id }}">
+
+      <p><strong>{{ t.label_game_name }}:</strong> {{ game.name }}</p>
+
+      <div class="mb-2">
+        <label class="form-label">{{ t.label_cabinet }}</label>
+        <input
+          name="cabinet"
+          class="form-control"
+          value="{{ game.cabinet }}"
+          required
+        >
+      </div>
+
+      <div class="mb-2">
+        <label class="form-label">{{ t.label_shelf }}</label>
+        <input
+          name="shelf"
+          class="form-control"
+          value="{{ game.shelf }}"
+          required
+        >
+      </div>
+
+      <div class="mb-2">
+        <label class="form-label">{{ t.label_copies }}</label>
+        <input
+          type="number"
+          name="copies"
+          class="form-control"
+          value="{{ game.copies }}"
+          min="0"
+          required
+        >
+      </div>
+
+      <div class="mb-2">
+        <label class="form-label">{{ t.label_min_age }}</label>
+        <input
+          type="number"
+          name="age"
+          class="form-control"
+          value="{{ game.age }}"
+          min="0"
+          required
+        >
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">{{ t.label_rules }}</label>
+        <input
+          name="rules"
+          class="form-control"
+          value="{{ game.rules }}"
+        >
+      </div>
+
+      <button class="btn btn-success">{{ t.btn_save_changes }}</button>
+      <a href="/" class="btn btn-secondary">{{ t.btn_cancel }}</a>
+    </form>
+  {% endif %}
+
+</div>
+{% endblock %}

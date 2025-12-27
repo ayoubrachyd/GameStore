@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container-xl">
+
+  <div class="list-toolbar">
+
+    <!-- EXPORT DROPDOWN -->
+    <div class="dropdown">
+      <button
+        class="btn btn-outline-primary dropdown-toggle"
+        type="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        {{ t.export_button }}
+      </button>
+
+      <ul class="dropdown-menu">
+        <li>
+          <a class="dropdown-item" href="export_ordered_pdf">
+            {{ t.export_pdf }}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="export_excel">
+            {{ t.export_excel }}
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="summary-box">
+      <span>📦 <strong>{{ total_games }}</strong> {{ t.summary_games }}</span>
+      <span>🎲 <strong>{{ total_copies }}</strong> {{ t.summary_copies }}</span>
+    </div>
+
+  </div>
+
+  <!-- TABLE -->
+  <table class="table table-bordered table-striped mt-3">
+    <thead class="table-primary">
+      <tr>
+        <th>{{ t.th_name }}</th>
+        <th>{{ t.th_cabinet }}</th>
+        <th>{{ t.th_shelf }}</th>
+        <th>{{ t.th_copies }}</th>
+        <th>{{ t.th_age }}</th>
+        <th>{{ t.th_rules }}</th>
+        <th>{{ t.th_updated }}</th>
+      </tr>
+    </thead>
+
+    <tbody>
+    {% for game in games %}
+      <tr>
+        <td>{{ game.name }}</td>
+        <td>{{ game.cabinet }}</td>
+        <td>{{ game.shelf }}</td>
+        <td>{{ game.copies }}</td>
+        <td>{{ game.age }}+</td>
+        <td>
+          {% if game.rules %}
+            <a href="{{ game.rules }}" target="_blank">{{ t.view_rules }}</a>
+          {% else %}
+            —
+          {% endif %}
+        </td>
+
+        <!-- UPDATED COLUMN -->
+        <td>
+          {% if game.updated_at %}
+            {% set updated = game.updated_at | to_datetime %}
+            {% set days = (now - updated).days %}
+
+            {% if days == 0 %}
+              <span class="badge bg-success">{{ t.updated_today }}</span>
+            {% elif days <= 7 %}
+              <span class="badge bg-warning text-dark">{{ t.updated_this_week }}</span>
+            {% else %}
+              <small class="text-muted">{{ updated.date() }}</small>
+            {% endif %}
+
+            {% if game.editor_name %}
+              <br>
+              <small class="text-muted">{{ t.updated_by }} {{ game.editor_name }}</small>
+            {% endif %}
+          {% else %}
+            <small class="text-muted">—</small>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <a href="/" class="btn btn-secondary mt-3">{{ t.btn_back }}</a>
+
+</div>
+{% endblock %}

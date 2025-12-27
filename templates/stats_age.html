@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+
+  <div class="Find">
+    <h2 class="mb-2">{{ t.stats_title }}</h2>
+    <p class="text-muted mb-4">{{ t.stats_subtitle }}</p>
+  </div>
+
+  <!-- SUMMARY CARDS -->
+  <div class="row mb-4">
+
+    <div class="col-md-4 mb-3">
+      <div class="card text-center p-3">
+        <h6>{{ t.stats_total_games }}</h6>
+        <h3>{{ total_games }}</h3>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+      <div class="card text-center p-3">
+        <h6>{{ t.stats_average_age }}</h6>
+        <h3>{{ avg_age }}</h3>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+      <div class="card text-center p-3">
+        <h6>{{ t.stats_most_common_age }}</h6>
+        <h3>{{ most_common }}+</h3>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CHART CONTAINER -->
+  <div class="card p-3">
+    <div class="chart-wrapper">
+      <canvas id="ageChart"></canvas>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2 mt-4">
+    <a href="/" class="btn btn-secondary">{{ t.btn_back }}</a>
+  </div>
+
+  <!-- 🔒 SAFE JSON DATA -->
+  <script id="age-data" type="application/json">
+  {
+    "labels": {{ ages | tojson }},
+    "counts": {{ counts | tojson }}
+  }
+  </script>
+
+  <!-- CHART.JS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    const dataElement = document.getElementById("age-data");
+    const chartData = JSON.parse(dataElement.textContent);
+
+    const ctx = document.getElementById("ageChart").getContext("2d");
+
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: chartData.labels,
+        datasets: [{
+          data: chartData.counts,
+          backgroundColor: "#0d6efd"
+        }]
+      },
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: { precision: 0 }
+          }
+        }
+      }
+    });
+  </script>
+
+</div>
+{% endblock %}

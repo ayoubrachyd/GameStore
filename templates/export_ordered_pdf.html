@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container-xl">
+
+  <div class="mt-4 mb-4 p-4 bg-light border rounded">
+    <h2 class="fw-bold mb-1">
+      {{ t.export_pdf_title }}
+    </h2>
+    <p class="text-muted mb-0">
+      {{ t.export_pdf_subtitle }}
+    </p>
+  </div>
+
+  <form method="POST" class="col-md-6">
+
+    <div class="mb-3">
+      <label class="form-label">{{ t.label_cabinet_optional }}</label>
+      <input
+        name="cabinet"
+        class="form-control"
+        placeholder="{{ t.ph_example_1 }}"
+      >
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">{{ t.label_shelf_optional }}</label>
+      <input
+        name="shelf"
+        class="form-control"
+        placeholder="{{ t.ph_example_2 }}"
+      >
+    </div>
+
+    <button class="btn btn-primary">{{ t.btn_export_pdf }}</button>
+    <a href="/list" class="btn btn-secondary">{{ t.btn_back }}</a>
+
+  </form>
+
+</div>
+{% endblock %}

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}" dir="{{ dir }}">
+
+<head>
+  <meta charset="UTF-8">
+  <title>GameStore KDIE Community</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+
+  <!-- LEFT: LOGO + TITLE -->
+  <div class="header-left">
+    <span class="app-logo">🎲</span>
+
+    <div class="app-text">
+      <!-- Desktop title -->
+      <span class="app-title d-none d-sm-inline">
+        {{ t.app_title }}
+      </span>
+
+      <!-- Mobile short title -->
+      <span class="app-title d-inline d-sm-none">
+        GameStore
+      </span>
+
+      <span class="app-subtitle">{{ t.app_subtitle }}</span>
+    </div>
+  </div>
+
+  <!-- RIGHT: USER INFO (DESKTOP ONLY) -->
+  <div class="header-right d-none d-sm-block">
+    {% if session.get("role") %}
+      <span class="user-info">
+        {% if session.get("role") == "admin" %}
+          {{ t.role_admin }}:
+        {% else %}
+          {{ t.role_editor }}:
+        {% endif %}
+        <strong>{{ session.get("username") }}</strong>
+      </span>
+    {% endif %}
+  </div>
+
+  <!-- RIGHT: ICONS (MOBILE) -->
+  <div class="header-actions d-sm-none">
+
+    <!-- USER DROPDOWN -->
+    {% if session.get("role") %}
+    <div class="dropdown">
+      <button class="btn btn-sm btn-outline-light"
+              data-bs-toggle="dropdown">
+        👤
+      </button>
+
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li class="dropdown-item text-muted">
+          {{ session.get("role") }}: {{ session.get("username") }}
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <a class="dropdown-item" href="/logout">
+            {{ t.footer_logout }}
+          </a>
+        </li>
+      </ul>
+    </div>
+    {% endif %}
+
+    <!-- LANGUAGE DROPDOWN -->
+    <div class="dropdown">
+      <button class="btn btn-sm btn-outline-light"
+              data-bs-toggle="dropdown">
+        🌐
+      </button>
+
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+          <a class="dropdown-item" href="/set-language/en">
+            English
+            <img src="{{ url_for('static', filename='images/gb.svg') }}" width="20">
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="/set-language/hu">
+            Magyar
+            <img src="{{ url_for('static', filename='images/hu.svg') }}" width="20">
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="/set-language/ar">
+            العربية
+            <img src="{{ url_for('static', filename='images/ma.svg') }}" width="20">
+          </a>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- DESKTOP LANGUAGE DROPDOWN -->
+
+<div class="dropdown d-none d-sm-block">
+  <button class="btn btn-primary dropdown-toggle"
+          data-bs-toggle="dropdown">
+    🌐 {{ t.footer_language }}
+  </button>
+
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li>
+      <a class="dropdown-item" href="/set-language/en">
+        English
+        <img src="{{ url_for('static', filename='images/gb.svg') }}"
+             width="20" class="ms-2">
+      </a>
+    </li>
+
+    <li>
+      <a class="dropdown-item" href="/set-language/hu">
+        Magyar
+        <img src="{{ url_for('static', filename='images/hu.svg') }}"
+             width="20" class="ms-2">
+      </a>
+    </li>
+
+    <li>
+      <a class="dropdown-item" href="/set-language/ar">
+        العربية
+        <img src="{{ url_for('static', filename='images/ma.svg') }}"
+             width="20" class="ms-2">
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+</header>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ================= PAGE CONTENT ================= -->
+<main class="page-wrapper">
+
+  {% if session.get("just_logged_in") and request.path == "/" %}
+    <div id="welcome-banner" class="welcome-banner">
+      {{ t.welcome_message.format(username=session.get("username")) }}<br>
+      {{ t.welcome_role_text }}
+      {% if session.get("role") == "admin" %}
+        <strong>{{ t.role_admin }}</strong>
+      {% else %}
+        <strong>{{ t.role_editor }}</strong>
+      {% endif %}
+    </div>
+    {% set _ = session.pop("just_logged_in") %}
+  {% endif %}
+
+  {% block content %}{% endblock %}
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="app-footer">
+  <div class="footer-container">
+
+    <!-- LEFT -->
+    <div class="footer-brand">
+      <h3>{{ t.footer_title }}</h3>
+      <p>{{ t.footer_description }}</p>
+    </div>
+
+    <!-- CENTER -->
+    <div class="footer-links">
+      <a href="/">{{ t.footer_home }}</a>
+      <a href="/list">{{ t.footer_games }}</a>
+      <a href="/stats/age">{{ t.footer_statistics }}</a>
+      {% if session.get("role") %}
+        <a href="/logout" class="logout-link">{{ t.footer_logout }}</a>
+      {% else %}
+        <a href="/login" class="login-link">{{ t.footer_login }}</a>
+      {% endif %}
+    </div>
+
+    <!-- RIGHT -->
+    <div class="footer-meta">
+      <p>
+        {{ t.footer_esc }}<br>
+        <strong>{{ t.footer_for }}</strong>
+      </p>
+
+      <div class="footer-github">
+        <a href="https://github.com/YOUR_USERNAME/YOUR_REPO"
+           target="_blank"
+           rel="noopener">
+          <span class="github-icon">🐙</span>
+          {{ t.footer_github }}
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    {{ t.footer_author }}
+  </div>
+</footer>
+
+<!-- ================= JS ================= -->
+<script>
+  setTimeout(() => {
+    const banner = document.getElementById("welcome-banner");
+    if (banner) {
+      banner.style.opacity = "0";
+      setTimeout(() => banner.remove(), 1000);
+    }
+  }, 4000);
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

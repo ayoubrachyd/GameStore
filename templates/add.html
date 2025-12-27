@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container-xl">
+
+  <div class="Find">
+    <h2 class="fw-bold mb-0">{{ t.add_title }}</h2>
+    <p class="mb-0">{{ t.add_subtitle }}</p>
+  </div>
+
+  <form method="POST" class="col-md-6">
+
+    <div class="mb-3 position-relative">
+      <label class="form-label">{{ t.label_game_name }}</label>
+      <input
+        id="nameInput"
+        name="name"
+        class="form-control"
+        required
+        autocomplete="off"
+      >
+      <div
+        id="nameWarning"
+        class="text-warning mt-1"
+        style="display:none;"
+      >
+        {{ t.add_name_exists }}
+      </div>
+    </div>
+
+    <input
+      name="cabinet"
+      class="form-control mb-2"
+      placeholder="{{ t.ph_cabinet }}"
+      required
+    >
+
+    <input
+      name="shelf"
+      class="form-control mb-2"
+      placeholder="{{ t.ph_shelf }}"
+      required
+    >
+
+    <input
+      type="number"
+      name="copies"
+      class="form-control mb-2"
+      placeholder="{{ t.ph_copies }}"
+      required
+    >
+
+    <input
+      type="number"
+      name="age"
+      class="form-control mb-2"
+      placeholder="{{ t.ph_age }}"
+      required
+    >
+
+    <input
+      name="rules"
+      class="form-control mb-2"
+      placeholder="{{ t.ph_rules }}"
+    >
+
+    <button class="btn btn-success">{{ t.btn_add }}</button>
+    <a href="/" class="btn btn-secondary">{{ t.btn_back }}</a>
+
+  </form>
+
+  <!-- JAVASCRIPT -->
+  <script>
+    const nameInput = document.getElementById("nameInput");
+    const warning = document.getElementById("nameWarning");
+
+    let timeout = null;
+
+    nameInput.addEventListener("input", () => {
+      clearTimeout(timeout);
+
+      const name = nameInput.value.trim();
+      if (name.length < 2) {
+        warning.style.display = "none";
+        return;
+      }
+
+      timeout = setTimeout(async () => {
+        const res = await fetch(
+          `/api/check_game_name?name=${encodeURIComponent(name)}`
+        );
+        const data = await res.json();
+
+        warning.style.display = data.exists ? "block" : "none";
+      }, 300);
+    });
+  </script>
+
+</div>
+{% endblock %}

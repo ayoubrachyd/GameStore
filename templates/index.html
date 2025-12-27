@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="hero-wrapper">
+  <div class="hero-inner">
+
+    <!-- LEFT: IMAGE -->
+    <div class="hero-left">
+      <img
+        src="{{ url_for('static', filename='images/hero2.png') }}"
+        alt="Games illustration"
+        class="hero-image"
+      >
+    </div>
+
+    <!-- RIGHT: CONTENT -->
+    <div class="hero-right">
+      <h1>{{ t.hero_title }}</h1>
+      <p class="hero-subtitle">
+        {{ t.hero_subtitle }}
+      </p>
+
+      <div class="hero-actions">
+
+        <a href="/research" class="btn btn-primary">
+          {{ t.btn_search }}
+        </a>
+
+        <a href="/list" class="btn btn-primary">
+          {{ t.btn_view_all }}
+        </a>
+
+        {% if session.get("role") in ["editor", "admin"] %}
+          <a href="/edit" class="btn btn-info btn-lg">
+            <span class="glyphicon glyphicon-pencil"></span>
+            {{ t.btn_edit_game }}
+          </a>
+        {% endif %}
+
+        {% if session.get("role") == "admin" %}
+          <a href="/add" class="btn btn-success">
+            {{ t.btn_add_game }}
+          </a>
+          <a href="/delete" class="btn btn-danger">
+            {{ t.btn_delete_game }}
+          </a>
+        {% endif %}
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}

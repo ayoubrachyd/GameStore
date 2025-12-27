@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container-xl">
+
+  <!-- PAGE HEADER -->
+  <div class="Find">
+    <h2 class="fw-bold mb-0">{{ t.research_title }}</h2>
+    <p class="mb-0">{{ t.research_subtitle }}</p>
+  </div>
+
+  <!-- SEARCH CARD -->
+  <div class="card search-card">
+
+    <form method="POST" class="search-form">
+
+      <!-- GAME NAME -->
+      <div class="form-group full position-relative">
+        <label>{{ t.label_game_name }}</label>
+        <input
+          id="nameInput"
+          name="name"
+          class="form-control"
+          placeholder="{{ t.ph_game_name }}"
+          autocomplete="off"
+        >
+        <div id="suggestions" class="list-group position-absolute w-100"></div>
+      </div>
+
+      <!-- CABINET / SHELF / AGE -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>{{ t.label_cabinet }}</label>
+          <input name="cabinet" class="form-control" placeholder="{{ t.ph_cabinet }}">
+        </div>
+
+        <div class="form-group">
+          <label>{{ t.label_shelf }}</label>
+          <input name="shelf" class="form-control" placeholder="{{ t.ph_shelf }}">
+        </div>
+
+        <div class="form-group">
+          <label>{{ t.label_age }}</label>
+          <input name="age" class="form-control" placeholder="{{ t.ph_age }}">
+        </div>
+      </div>
+
+      <!-- EDITOR -->
+      <div class="form-group full">
+        <label>{{ t.label_editor }}</label>
+        <input name="editor" class="form-control" placeholder="{{ t.ph_editor }}">
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="form-actions">
+        <button class="btn-primary" type="submit">{{ t.btn_search }}</button>
+        <a href="/research" class="btn-secondary">{{ t.btn_reset }}</a>
+      </div>
+
+    </form>
+
+  </div>
+
+  <!-- RESULTS -->
+  {% if results %}
+    <hr>
+    <h5 class="mt-3">{{ t.results_title }} ({{ results|length }})</h5>
+
+    <table class="table table-bordered table-striped mt-2">
+      <thead class="table-dark">
+        <tr>
+          <th>{{ t.th_name }}</th>
+          <th>{{ t.th_cabinet }}</th>
+          <th>{{ t.th_shelf }}</th>
+          <th>{{ t.th_copies }}</th>
+          <th>{{ t.th_age }}</th>
+          <th>{{ t.th_rules }}</th>
+          <th>{{ t.th_editor }}</th>
+          <th>{{ t.th_last_edited }}</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for game in results %}
+        <tr>
+          <td>{{ game.name }}</td>
+          <td>{{ game.cabinet }}</td>
+          <td>{{ game.shelf }}</td>
+          <td>{{ game.copies }}</td>
+          <td>{{ game.age }}+</td>
+          <td>
+            {% if game.rules %}
+              <a href="{{ game.rules }}" target="_blank">{{ t.view_rules }}</a>
+            {% else %}
+              —
+            {% endif %}
+          </td>
+          <td>{{ game.editor_name if game.editor_name else "—" }}</td>
+          <td>
+            {% if game.updated_at %}
+              {{ game.updated_at[:16].replace("T", " ") }}
+            {% else %}
+              —
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  {% elif request.method == "POST" %}
+    <div class="alert alert-warning mt-3">
+      {{ t.no_results }}
+    </div>
+  {% endif %}
+
+  <a href="/" class="btn btn-secondary mt-3">{{ t.btn_back }}</a>
+
+  <!-- AUTOCOMPLETE JAVASCRIPT -->
+  <script>
+    const input = document.getElementById("nameInput");
+    const suggestions = document.getElementById("suggestions");
+
+    input.addEventListener("input", async () => {
+      const query = input.value.trim();
+
+      if (query.length < 2) {
+        suggestions.innerHTML = "";
+        return;
+      }
+
+      const res = await fetch(`/api/autocomplete?q=${encodeURIComponent(query)}`);
+      const data = await res.json();
+
+      suggestions.innerHTML = "";
+
+      data.forEach(name => {
+        const item = document.createElement("button");
+        item.type = "button";
+        item.className = "list-group-item list-group-item-action";
+
+        const regex = new RegExp(`(${query})`, "ig");
+        item.innerHTML = name.replace(regex, "<strong>$1</strong>");
+
+        item.onclick = () => {
+          input.value = name;
+          suggestions.innerHTML = "";
+        };
+
+        suggestions.appendChild(item);
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!input.contains(e.target)) {
+        suggestions.innerHTML = "";
+      }
+    });
+  </script>
+
+</div>
+{% endblock %}
